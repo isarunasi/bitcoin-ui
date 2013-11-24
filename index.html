@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Bitcoin conversion UI demo</title>
+
+    <link rel="stylesheet/less" type="text/css" href="style.less" />
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+    <script src="less-1.5.0.min.js"></script>
+    <script src="https://websocket.mtgox.com/socket.js"></script>
+    <script src="util.js"></script>
+</head>
+
+<body>
+<div id="status">
+    <span id="status-text">Connecting to MtGox API...</span>
+</div>
+
+<div id="controls">
+    <div>
+        Convert between BTC and
+        <select id="currency-select">
+            <option value="USD" selected="selected">USD</option>
+            <option value="AUD">AUD</option>
+            <option value="CAD">CAD</option>
+            <option value="CHF">CHF</option>
+            <option value="CNY">CNY</option>
+            <option value="DKK">DKK</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="HKD">HKD</option>
+            <option value="NZD">NZD</option>
+            <option value="PLN">PLN</option>
+            <option value="RUB">RUB</option>
+            <option value="SGD">SGD</option>
+            <option value="THB">THB</option>
+            <option value="NOK">NOK</option>
+            <option value="CZK">CZK</option>
+            <option value="JPY">JPY</option>
+            <option value="SEK">SEK</option>
+        </select>
+        Exchange rate is <span id="exchange-rate">N/A</span>
+    </div>
+
+    <div>
+        <input id="btc-input" type="number" step="0.01" value="1" autofocus>
+        <span class='ccy'>BTC</span>=
+        <output id="btc-output" name="btc-output" for="btc-input"></output>
+        <span class='ccy selected'></span>
+    </div>
+    <div>
+        <input id="ccy-input" type="number" step="0.01" value="1">
+        <span class='ccy selected'></span>=
+        <output id="ccy-output" name="ccy-output" for="ccy-input"></output>
+        <span class='ccy'>BTC</span>
+    </div>
+</div>
+</body>
+</html>

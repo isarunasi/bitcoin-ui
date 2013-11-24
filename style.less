@@ -1,0 +1,58 @@
+// color and parameter definition
+@green: #00ff00;
+@red:   #ff0000;
+@white: #ffffff;
+@grey:  #e6e6e6;
+@black: #000000;
+
+@shade: 50%;
+@tint:  30%;
+@padding: 3px;
+
+.border {
+    border-style: solid;
+    border-width: 1px;
+}
+
+.geometry {
+    padding: @padding;
+}
+
+// style of page elements
+
+body {background-color: @grey;}
+
+#controls {
+    div {
+        .geometry;
+    }
+}
+
+.ok      {background-color: shade(@green, @shade);}
+.warning {background-color: shade(@red, @shade);}
+
+.increase {background-color: tint(@green, @tint);}
+.decrease {background-color: tint(@red, @tint);}
+
+#status {
+    background-color: @black;
+    color:            @white;
+    .geometry;
+}
+
+#status.ok      {.ok}
+#status.warning {.warning}
+
+output {
+    width:         150px;
+    display:       inline-block;
+    text-align:    right;
+    padding-right: @padding;
+    .border;
+}
+
+.ccy {
+    display: inline-block;
+    width:   35px;
+    .geometry;
+}
