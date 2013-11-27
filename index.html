@@ -14,48 +14,68 @@
 </head>
 
 <body>
-<div id="status">
-    <span id="status-text">Connecting to MtGox API...</span>
+<div class="converter">
+    <div class="header">
+        <span class="left">MtGox Currency Converter</span>
+        <div class="right">Total Socket Messages: <span id="message-counter">0</span></div>
+    </div>
+    <div class="contents">
+        <div class="row heading">
+            <div class="column1">Last Price</div>
+            <div class="column2">High</div>
+            <div class="column3">Low</div>
+            <div class="column4">Volume</div>
+        </div>
+        <hr />
+        <div class="row data">
+            <div class="column1"><span class="price">N/A</span></div>
+            <div class="column2"><span id="high">N/A</span></div>
+            <div class="column3"><span id="low">N/A</span></div>
+            <div class="column4"><span id="volume">N/A</span></div>
+        </div>
+        <div class="row">
+            <div class="left">Currency</div>
+            <select class="right" id="currency-select">
+                <option value="USD" selected="selected">USD</option>
+                <option value="AUD">AUD</option>
+                <option value="CAD">CAD</option>
+                <option value="CHF">CHF</option>
+                <option value="CNY">CNY</option>
+                <option value="DKK">DKK</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="HKD">HKD</option>
+                <option value="NZD">NZD</option>
+                <option value="PLN">PLN</option>
+                <option value="RUB">RUB</option>
+                <option value="SGD">SGD</option>
+                <option value="THB">THB</option>
+                <option value="NOK">NOK</option>
+                <option value="CZK">CZK</option>
+                <option value="JPY">JPY</option>
+                <option value="SEK">SEK</option>
+            </select>
+        </div>
+        <div class="row">
+            <div class="left">Price/BTC</div>
+            <span class="right price">N/A</span>
+        </div>
+        <div class="row">
+            <div class="left">Amount</div>
+            <div class="right">
+                <div class="currency">BTC</div>
+                <input class="text-field" id="input"></input>
+            </div>
+        </div>
+        <div class="row">
+            <div class="left">Total</div>
+            <div class="right">
+                <div class="currency selected"></div>
+                <div class="text-field" id="output"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div id="controls">
-    <div>
-        Convert between BTC and
-        <select id="currency-select">
-            <option value="USD" selected="selected">USD</option>
-            <option value="AUD">AUD</option>
-            <option value="CAD">CAD</option>
-            <option value="CHF">CHF</option>
-            <option value="CNY">CNY</option>
-            <option value="DKK">DKK</option>
-            <option value="EUR">EUR</option>
-            <option value="GBP">GBP</option>
-            <option value="HKD">HKD</option>
-            <option value="NZD">NZD</option>
-            <option value="PLN">PLN</option>
-            <option value="RUB">RUB</option>
-            <option value="SGD">SGD</option>
-            <option value="THB">THB</option>
-            <option value="NOK">NOK</option>
-            <option value="CZK">CZK</option>
-            <option value="JPY">JPY</option>
-            <option value="SEK">SEK</option>
-        </select>
-        Exchange rate is <span id="exchange-rate">N/A</span>
-    </div>
-
-    <div>
-        <input id="btc-input" type="number" step="0.01" value="1" autofocus>
-        <span class='ccy'>BTC</span>=
-        <output id="btc-output" name="btc-output" for="btc-input"></output>
-        <span class='ccy selected'></span>
-    </div>
-    <div>
-        <input id="ccy-input" type="number" step="0.01" value="1">
-        <span class='ccy selected'></span>=
-        <output id="ccy-output" name="ccy-output" for="ccy-input"></output>
-        <span class='ccy'>BTC</span>
-    </div>
-</div>
 </body>
 </html>

@@ -1,58 +1,129 @@
-// color and parameter definition
-@green: #00ff00;
-@red:   #ff0000;
-@white: #ffffff;
-@grey:  #e6e6e6;
-@black: #000000;
+// color settings
+@background-color: #f2f2f2;
+@white:            #ffffff;
+@header-color1:    #a7c7dc;
+@header-color2:    #85b2d3;
 
-@shade: 50%;
-@tint:  30%;
-@padding: 3px;
+// custom formatting settings
+@width:   700px;
+@padding: 15px;
 
+// commonly used formatting
+.bold-text {font-weight: bold}
+.text-shadow {text-shadow: 2px 2px #888;}
+.pad-sides {
+    padding-left: @padding;
+    padding-right: @padding;
+}
 .border {
     border-style: solid;
+    border-color: #cccccc;
     border-width: 1px;
 }
 
-.geometry {
-    padding: @padding;
+
+// column position settings
+@col2: 145px;
+@col3: 260px;
+@col4: 380px;
+
+// gradient proc
+.gradient (@color1; @color2) {
+    background: -webkit-linear-gradient(@color1, @color2);
+    background: -o-linear-gradient(@color1, @color2);
+    background: -moz-linear-gradient(@color1, @color2);
+    background: linear-gradient(@color1, @color2);
 }
 
-// style of page elements
+body {
+    background-color: @background-color;
+}
 
-body {background-color: @grey;}
+.converter {
+    width: @width;
+    background-color: @white;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    box-shadow: 1px 1px 1px #dddddd;
+}
 
-#controls {
-    div {
-        .geometry;
+.header {
+    height: 40px;
+    line-height: 40px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: @white;
+    .bold-text;
+    .text-shadow;
+    .pad-sides;
+    .gradient(@header-color1, @header-color2);
+}
+
+.contents {
+    .pad-sides;
+    padding-bottom: @padding;
+    hr {
+        border-color: #dddddd;
     }
 }
 
-.ok      {background-color: shade(@green, @shade);}
-.warning {background-color: shade(@red, @shade);}
-
-.increase {background-color: tint(@green, @tint);}
-.decrease {background-color: tint(@red, @tint);}
-
-#status {
-    background-color: @black;
-    color:            @white;
-    .geometry;
+.row {
+    width: 670px;
+    height: 40px;
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+    div {position: absolute;}
+    .column2 {left: @col2}
+    .column3 {left: @col3}
+    .column4 {left: @col4}
+    .left {
+        width: 85px;
+        height: 40px;
+        line-height: 40px;
+        text-align: right;
+        padding-right: 30px;
+        .bold-text;
+    }
+    .right {
+        position: relative;
+        width: 565px;
+        height: 33px;
+        line-height: 33px;
+        margin: 0px;
+        border: 0px;
+        .currency {
+            width: 48px;
+            background: #eeeeee;
+            margin: 0px;
+            padding: 0px;
+            height: 33px;
+            line-height: 33px;
+            text-align: center;
+            position: relative;
+            float: left;
+            .border;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            border-right-width: 0px;
+        }
+        .text-field {
+            margin: 0px;
+            padding-left: 15px;
+            height: 33px;
+            width: 499px;
+            position: relative;
+            float: left;
+            .border;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+    }
 }
+.data    div {top:    0px;}
+.heading div {bottom: 0px;}
 
-#status.ok      {.ok}
-#status.warning {.warning}
+.heading {.bold-text;}
 
-output {
-    width:         150px;
-    display:       inline-block;
-    text-align:    right;
-    padding-right: @padding;
-    .border;
-}
-
-.ccy {
-    display: inline-block;
-    width:   35px;
-    .geometry;
-}
+.left {float: left;}
+.right {float: right;}

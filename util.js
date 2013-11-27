@@ -2,14 +2,12 @@
 var util = {
 
     state:            'loading', // application state
-    bitcoinInput:     {},        // bitcoin conversion input
-    bitcoinOutput:    {},        // bitcoin conversion output
-    currencyInput:    {},        // currency conversion input
-    currencyOutput:   {},        // currency conversion output
+    input:            {},        // bitcoin conversion input
+    output:           {},        // bitcoin conversion output
     currencySelect:   {},        // currency selector
     displayPrecision: 3,         // decimal places for display purpose
-    fadeInSpeed:      500,       // fadeIn effect speed
     mtGoxSocket:      {},        // connection to MtGox API
+    messageCounter:   0,         // counter of received messages
 
     // supported currencies
     currencies: {
@@ -37,25 +35,18 @@ var util = {
     // init
     init: function () {
 
-        // set initial application state
-        util.setState('connecting');
-
         // store element references as they will not change
         util.currencySelect = $('#currency-select');
-        util.bitcoinInput   = $('#btc-input');
-        util.bitcoinOutput  = $('#btc-output');
-        util.currencyInput  = $('#ccy-input');
-        util.currencyOutput = $('#ccy-output');
+        util.input          = $('#input');
+        util.output         = $('#output');
 
-        // detect change of any input field
-        util.bitcoinInput.bind('input', util.update);
-        util.currencyInput.bind('input', util.update);
+        // detect change of input field
+        util.input.bind('input', util.update);
 
         // detect currency change
         util.currencySelect.change(util.currencyChanged);
 
-        // since css less allows drop down state not to change after page
-        // reload we have to trigger currency change event manually
+        // update information (should simply set everything to N/A)
         util.currencyChanged();
 
         // MtGox doesn't seem to allow currency changing after establishing
@@ -85,45 +76,28 @@ var util = {
     // message handler
     onMessage: function (data) {
 
-        var messageCurrency, previousExchangeRate, newExchangeRate,
-            exchangeRateSpan;
+        // store last price for calculations
+        var messageCurrency = data.ticker.buy.currency;
+        util.currencies[messageCurrency].price = Number(data.ticker.last.value);
 
-        // store latest exchange rate (use average for now)
-        messageCurrency = data.ticker.buy.currency;
-        previousExchangeRate = util.currencies[messageCurrency].exchangeRate;
-        newExchangeRate = Number(data.ticker.avg.value);
-        util.currencies[messageCurrency].exchangeRate = newExchangeRate;
+        // store other relevant data for display purposes
+        util.currencies[messageCurrency].last = data.ticker.last.display_short;
+        util.currencies[messageCurrency].high = data.ticker.high.display_short;
+        util.currencies[messageCurrency].low = data.ticker.low.display_short;
+        util.currencies[messageCurrency].volume = data.ticker.vol.display;
 
-        // if this is currently active currency, update conversion
+        // if this is currently active currency, recalculate total
         if (messageCurrency == util.currencySelect.val()) {
-
-            // recalculate totals
             util.update();
-
-            // update displayed exchange rate and highlight if it has changed
-            exchangeRateSpan = $('#exchange-rate');
-            exchangeRateSpan.text(util.formatNumber(newExchangeRate));
-            if (newExchangeRate > previousExchangeRate) {
-                exchangeRateSpan.addClass('increase');
-            } else if (newExchangeRate < previousExchangeRate) {
-                exchangeRateSpan.addClass('decrease');
-            } else if (newExchangeRate == previousExchangeRate) {
-                util.clearExchangeRateHighlights();
-            }
-
-            // if this is the first message of desired currency, enable UI
-            if (util.state != 'ready') {
-                util.setState('ready');
-            }
         }
+
+        // update message counter
+        $('#message-counter').text(util.messageCounter++);
     },
 
 
     // socket open event handler
-    onOpen: function () {
-
-        util.setState('connected');
-    },
+    onOpen: function () {},
 
 
     // error handler
@@ -143,87 +117,30 @@ var util = {
         selectedCurrency = util.currencies[util.currencySelect.val()];
 
         // first convert bitcoins to selected currency
-        total = util.bitcoinInput.val() * selectedCurrency.exchangeRate;
+        total = util.input.val() * selectedCurrency.price;
 
         // display results of bitcoin conversion
-        util.bitcoinOutput.val(util.formatNumber(total));
+        util.output.text(util.formatNumber(total));
 
-        // now convert selected currency to bitcoins
-        total = util.currencyInput.val() / selectedCurrency.exchangeRate;
-
-        // display results of selected currency conversion
-        util.currencyOutput.val(util.formatNumber(total));
+        // update currency info row
+        $('.price').text(selectedCurrency.last);
+        $('#high').text(selectedCurrency.high);
+        $('#low').text(selectedCurrency.low);
+        $('#volume').text(selectedCurrency.volume);
     },
 
 
     // handle currency change by the user
     currencyChanged: function () {
 
-        var selectedCurrency, exchangeRate;
+        var selectedCurrency, price;
 
-        // update currency codes
+        // update selected currency code
         selectedCurrency = util.currencySelect.val();
-        $('.ccy.selected').text(selectedCurrency);
-
-        // update displayed exchange rate if required and clear any highlights
-        exchangeRate = util.formatNumber(
-            util.currencies[selectedCurrency].exchangeRate
-        );
-        if (isNaN(exchangeRate)) {
-            util.setState('loading');
-        } else if (util.state == 'loading') {
-            util.setState('ready');
-        }
-        $('#exchange-rate').text(exchangeRate);
-        util.clearExchangeRateHighlights();
+        $('.currency.selected').text(selectedCurrency);
 
         // recalculate totals
         util.update();
-    },
-
-
-    // update status bar
-    setState: function (state) {
-
-        var text = '';
-        var previousState = util.state;
-
-        switch (state) {
-            case 'connecting':
-                text = 'Connecting to MtGox API...';
-                break;
-            case 'connected':
-                text = 'Connection established, waiting for data...';
-                break;
-            case 'loading':
-                text = 'No data for this currency received. Waiting...'
-                $('#status').removeClass('ok');
-                break;
-            case 'ready':
-                text = 'Application initialised. Exchange rate and converted\
-                    totals are updated in real time.';
-                $('#status').addClass('ok');
-                util.displayUI();
-                break;
-        }
-        util.state = state;
-
-        // update info text
-        $('#status-text').text(text);
-    },
-
-
-    // display UI elements
-    displayUI: function () {
-
-        $('#controls').fadeIn(util.fadeInSpeed);
-    },
-
-
-    // clear highlights from exchange rate span
-    clearExchangeRateHighlights: function () {
-
-        $('#exchange-rate').removeClass('increase decrease');
     },
 
 
